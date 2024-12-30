@@ -5,32 +5,32 @@ const account1 = {
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2,
   pin: 1111,
-}; /*1a*/
+};
 
 const account2 = {
   owner: "Aijan Zhakypbaeva",
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
-}; /*1b*/
+};
 
 const account3 = {
   owner: "Aiza Sungat",
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
-}; /*1c*/
+};
 
 const account4 = {
   owner: "Farabi Kazikhanov",
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
-}; /*1d*/
+};
 
-const accounts = [account1, account2, account3, account4]; /*1e*/
+const accounts = [account1, account2, account3, account4];
 
-// Elements *2*
+// Elements
 const labelWelcome = document.querySelector(".welcome");
 const labelDate = document.querySelector(".date");
 const labelBalance = document.querySelector(".balance__value");
@@ -57,10 +57,10 @@ const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
 const displayMovements = function (movements) {
-  containerMovements.innerHTML = ""; /*3d*/
+  containerMovements.innerHTML = "";
 
   movements.forEach(function (movement, index) {
-    const type = movement > 0 ? "deposit" : "withdrawal"; /*3a*/
+    const type = movement > 0 ? "deposit" : "withdrawal";
 
     const html = `
             <div class="movements__row">
@@ -69,15 +69,29 @@ const displayMovements = function (movements) {
     } ${type} </div>
             <div class="movements__value">${movement}€</div>
             </div>
-    `; /*3b*/
+    `;
 
-    containerMovements.insertAdjacentHTML("afterbegin", html); /*3c*/
+    containerMovements.insertAdjacentHTML("afterbegin", html);
   });
 };
 
-displayMovements(account1.movements); /*4*/
+displayMovements(account1.movements);
 
-// 5. Finish
+const createUsernames = function (accs) {
+  accs.forEach(
+    (acc) =>
+      (acc.username = acc.owner
+        .toLowerCase()
+        .split(" ")
+        .map((name) => name[0])
+        .join(""))
+  );
+}; /*1*/
+
+createUsernames(accounts); /*2*/
+console.log(accounts); /*3 look at username in each account*/
+
+// 4. Finish
 
 /*
 Push Future Changes:
