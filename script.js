@@ -86,13 +86,46 @@ const createUsernames = function (accs) {
         .map((name) => name[0])
         .join(""))
   );
+};
+
+createUsernames(accounts);
+console.log(accounts);
+
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance}€`;
 }; /*1*/
 
-createUsernames(accounts); /*2*/
-console.log(accounts); /*3 look at username in each account*/
+calcDisplayBalance(account1.movements); /*2*/
+
+const calcDisplaySummary = function (movements) {
+  const incomes = movements
+    .filter((mov) => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+
+  labelSumIn.textContent = `${incomes}€`;
+
+  const out = movements
+    .filter((mov) => mov < 0)
+    .reduce((acc, mov) => acc + mov);
+
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+
+  const interest = movements
+    .filter((mov) => mov > 0)
+    .map((deposit) => (deposit * 1.2) / 100)
+    .filter((int, i, arr) => {
+      console.log(arr);
+      return int >= 1; /*3c*/
+    })
+    .reduce((acc, int) => acc + int, 0);
+
+  labelSumInterest.textContent = `${interest}€`;
+}; /*3b*/
+
+calcDisplaySummary(account1.movements); /*3a*/
 
 // 4. Finish
-
 /*
 Push Future Changes:
 git add .
