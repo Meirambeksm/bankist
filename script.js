@@ -75,7 +75,7 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
+// displayMovements(account1.movements); 2g to be removed
 
 const createUsernames = function (accs) {
   accs.forEach(
@@ -94,38 +94,69 @@ console.log(accounts);
 const calcDisplayBalance = function (movements) {
   const balance = movements.reduce((acc, mov) => acc + mov, 0);
   labelBalance.textContent = `${balance}€`;
-}; /*1*/
+};
 
-calcDisplayBalance(account1.movements); /*2*/
+// calcDisplayBalance(account1.movements); 2h to be removed
 
-const calcDisplaySummary = function (movements) {
-  const incomes = movements
+const calcDisplaySummary = function (acc) {
+  const incomes = acc.movements
     .filter((mov) => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
 
   labelSumIn.textContent = `${incomes}€`;
 
-  const out = movements
+  const out = acc.movements
     .filter((mov) => mov < 0)
     .reduce((acc, mov) => acc + mov);
 
   labelSumOut.textContent = `${Math.abs(out)}€`;
 
-  const interest = movements
+  const interest = acc.movements
     .filter((mov) => mov > 0)
-    .map((deposit) => (deposit * 1.2) / 100)
+    .map((deposit) => (deposit * acc.interestRate) / 100)
     .filter((int, i, arr) => {
-      console.log(arr);
-      return int >= 1; /*3c*/
+      //   console.log(arr);
+      return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
 
   labelSumInterest.textContent = `${interest}€`;
-}; /*3b*/
+}; /*3 change param from movements to acc and adjust*/
 
-calcDisplaySummary(account1.movements); /*3a*/
+// calcDisplaySummary(account1.movements); 2i to be removed
 
-// 4. Finish
+let currentAccount; /*1*/
+
+btnLogin.addEventListener("click", function (e) {
+  e.preventDefault(); /*2a*/
+
+  currentAccount = accounts.find(
+    (acc) => acc.username === inputLoginUsername.value
+  ); /*2b*/
+
+  console.log(currentAccount); /*2c*/
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    console.log("LOGIN"); /*2d*/
+
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(" ")[0] /*2e*/
+    }`;
+
+    containerApp.style.opacity = 1; /*2f (change opacity of app class to 0 in style.css)*/
+
+    inputLoginUsername.value = inputLoginPin.value = ""; /*2m*/
+    inputLoginPin.blur(); /*2n*/
+
+    displayMovements(currentAccount.movements); /*2j*/
+    calcDisplayBalance(currentAccount.movements); /*2k*/
+    // calcDisplaySummary(currentAccount.movements); /*2l*/
+    calcDisplaySummary(currentAccount); /*4 replace step 2l*/
+  }
+});
+
+// 5. Finish
+
 /*
 Push Future Changes:
 git add .
