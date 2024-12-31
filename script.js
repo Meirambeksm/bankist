@@ -87,9 +87,9 @@ const createUsernames = function (accs) {
 };
 
 const calcDisplayBalance = function (acc) {
-  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0); /*5b change*/
-  labelBalance.textContent = `${acc.balance}€` /*5c change*/;
-}; /*5a change params from movements to acc and adjust*/
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${acc.balance}€`;
+};
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
@@ -121,7 +121,7 @@ const updateUI = function (acc) {
   displayMovements(acc.movements);
   calcDisplayBalance(acc);
   calcDisplaySummary(acc);
-}; /*8*/
+};
 
 let currentAccount;
 btnLogin.addEventListener("click", function (e) {
@@ -132,8 +132,6 @@ btnLogin.addEventListener("click", function (e) {
   );
 
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    console.log("LOGIN");
-
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(" ")[0]
     }`;
@@ -143,23 +141,17 @@ btnLogin.addEventListener("click", function (e) {
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
 
-    // displayMovements(currentAccount.movements); 9b
-    // calcDisplayBalance(currentAccount); /*6 change argument to currentAccount and step 9c*/
-    // calcDisplaySummary(currentAccount); 9d
-
-    updateUI(currentAccount); /*9a*/
+    updateUI(currentAccount);
   }
 });
 
 btnTransfer.addEventListener("click", function (e) {
-  e.preventDefault(); /*1*/
-  const amount = Number(inputTransferAmount.value); /*2*/
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
   const receiverAcc = accounts.find(
     (acc) => acc.username === inputTransferTo.value
-  ); /*3*/
-  console.log(amount, receiverAcc); /*4*/
-
-  inputTransferAmount.value = inputTransferTo.value = ""; /*11*/
+  );
+  inputTransferAmount.value = inputTransferTo.value = "";
 
   if (
     amount > 0 &&
@@ -171,14 +163,33 @@ btnTransfer.addEventListener("click", function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
-    updateUI(currentAccount); /*10*/
-  } /*7*/
+    updateUI(currentAccount);
+  }
 });
 
-// 12. Finish
+btnClose.addEventListener("click", function (e) {
+  e.preventDefault();
+  console.log("Delete");
+
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(
+      (acc) => acc.username === currentAccount.username
+    );
+    console.log(index);
+    accounts.splice(index, 1);
+    containerApp.style.opacity = 0;
+    console.log(accounts);
+  }
+
+  inputCloseUsername.value = inputClosePin.value = "";
+}); /*1*/
+
+// 2. Finish
 
 /*
-Push Future Changes:
 git add .
 git commit -m "Describe your changes"
 git push
