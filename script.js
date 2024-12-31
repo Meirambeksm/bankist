@@ -70,10 +70,7 @@ const account4 = {
     "2019-11-01T13:15:33.035Z",
     "2019-11-30T09:48:16.867Z",
     "2019-12-25T06:04:23.907Z",
-    "2020-01-25T14:18:46.235Z",
-    "2020-02-05T16:33:06.386Z",
     "2020-04-10T14:43:26.374Z",
-    "2020-06-25T18:49:59.371Z",
     "2020-07-26T12:01:20.894Z",
   ],
   currency: "USD",
@@ -111,17 +108,22 @@ const inputClosePin = document.querySelector(".form__input--pin");
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = "";
 
-  const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
+  const combinedMovsDates = acc.movements.map((mov, i) => ({
+    movement: mov,
+    movementDate: acc.movementsDates.at(i),
+  })); /*2*/
 
-  movs.forEach(function (movement, index) {
-    const type = movement > 0 ? "deposit" : "withdrawal";
-    const date = new Date(acc.movementsDates[index]); /*5a*/
-    const day = `${date.getDate()}`.padStart(2, 0); /*5b*/
-    const month = `${date.getMonth()}`.padStart(2, 0); /*5c*/
-    const year = date.getFullYear(); /*5d*/
-    const displayDate = `${day}/${month}/${year}`; /*5e*/
+  if (sort) combinedMovsDates.sort((a, b) => a.movement - b.movement); /*3*/
+
+  combinedMovsDates.forEach(function (obj, index) {
+    /*4a*/ const { movement, movementDate } = obj; /*4b*/
+
+    const type = movement > 0 ? "deposit" : "withdrawal"; /*4c*/
+    const date = new Date(movementDate); /*4d*/
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth()}`.padStart(2, 0);
+    const year = date.getFullYear();
+    const displayDate = `${day}/${month}/${year}`;
 
     const html = `
             <div class="movements__row">
@@ -132,11 +134,11 @@ const displayMovements = function (acc, sort = false) {
             <div class="movements__date">${displayDate}</div>
             <div class="movements__value">${movement}€</div>
             </div>
-    `; /*6 add div with date*/
+    `;
 
     containerMovements.insertAdjacentHTML("afterbegin", html);
   });
-}; /*2*/
+};
 
 const createUsernames = function (accs) {
   accs.forEach(
@@ -181,7 +183,7 @@ const calcDisplaySummary = function (acc) {
 createUsernames(accounts);
 
 const updateUI = function (acc) {
-  displayMovements(acc); /*3*/
+  displayMovements(acc);
   calcDisplayBalance(acc);
   calcDisplaySummary(acc);
 };
@@ -202,14 +204,14 @@ btnLogin.addEventListener("click", function (e) {
 
     containerApp.style.opacity = 1;
 
-    const now = new Date(); /*1a*/
-    const day = `${now.getDate()}`.padStart(2, 0); /*1b*/
-    const month = `${now.getMonth() + 1}`.padStart(2, 0); /*1c*/
-    const year = now.getFullYear(); /*1d*/
-    const hour = `${now.getHours()}`.padStart(2, 0); /*1e*/
-    const min = `${now.getMinutes()}`.padStart(2, 0); /*1f*/
+    const now = new Date();
+    const day = `${now.getDate()}`.padStart(2, 0);
+    const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    const year = now.getFullYear();
+    const hour = `${now.getHours()}`.padStart(2, 0);
+    const min = `${now.getMinutes()}`.padStart(2, 0);
 
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`; /*1g*/
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
 
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur();
@@ -236,8 +238,8 @@ btnTransfer.addEventListener("click", function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
-    currentAccount.movementsDates.push(new Date().toISOString()); /*7a*/
-    receiverAcc.movementsDates.push(new Date().toISOString()); /*7b*/
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
 
     updateUI(currentAccount);
   }
@@ -254,8 +256,7 @@ btnLoan.addEventListener("click", function (e) {
   ) {
     currentAccount.movements.push(amount);
 
-    currentAccount.movementsDates.push(new Date().toISOString()); /*8a*/
-    receiverAcc.movementsDates.push(new Date().toISOString()); /*8b*/
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     updateUI(currentAccount);
   }
@@ -283,11 +284,13 @@ btnClose.addEventListener("click", function (e) {
 let sorted = false;
 btnSort.addEventListener("click", function (e) {
   e.preventDefault();
-  displayMovements(currentAccount, !sorted); /*4*/
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
-// 9. Finish
+// 1. Remove receiverAcc.movementsDates.push(new Date().toISOString()) in btnLoan event
+// 5. Finish
+
 /*
 git add .
 git commit -m "Describe your changes"
