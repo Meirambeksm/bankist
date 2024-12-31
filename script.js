@@ -167,9 +167,24 @@ btnTransfer.addEventListener("click", function (e) {
   }
 });
 
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (
+    amount > 0 &&
+    currentAccount.movements.some((mov) => mov >= amount * 0.1)
+  ) {
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+  }
+
+  inputLoanAmount.value = "";
+}); /*1*/
+
 btnClose.addEventListener("click", function (e) {
   e.preventDefault();
-  console.log("Delete");
 
   if (
     inputCloseUsername.value === currentAccount.username &&
@@ -178,14 +193,12 @@ btnClose.addEventListener("click", function (e) {
     const index = accounts.findIndex(
       (acc) => acc.username === currentAccount.username
     );
-    console.log(index);
     accounts.splice(index, 1);
     containerApp.style.opacity = 0;
-    console.log(accounts);
   }
 
   inputCloseUsername.value = inputClosePin.value = "";
-}); /*1*/
+});
 
 // 2. Finish
 
