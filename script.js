@@ -1,5 +1,4 @@
 "use strict";
-
 const account1 = {
   owner: "Meirambek Mukhtarov",
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
@@ -69,9 +68,9 @@ const account4 = {
   movementsDates: [
     "2019-11-01T13:15:33.035Z",
     "2019-11-30T09:48:16.867Z",
-    "2019-12-25T06:04:23.907Z",
-    "2020-04-10T14:43:26.374Z",
-    "2020-07-26T12:01:20.894Z",
+    "2024-12-30T06:04:23.907Z",
+    "2025-01-01T14:43:26.374Z",
+    "2025-01-04T12:01:20.894Z",
   ],
   currency: "USD",
   locale: "en-US",
@@ -105,26 +104,37 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
+const formatMovementDate = function (date) {
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24)); /*2a*/
+
+  const daysPassed = calcDaysPassed(new Date(), date); /*4*/
+
+  if (daysPassed === 0) return "Today"; /*5a*/
+  if (daysPassed === 1) return "Yesterday"; /*5b*/
+  if (daysPassed <= 7) return `${daysPassed} days ago` /*5c*/;
+
+  const day = `${date.getDate()}`.padStart(2, 0); /*2b*/
+  const month = `${date.getMonth() + 1}`.padStart(2, 0); /*2c*/
+  const year = date.getFullYear(); /*2d*/
+  return `${day}/${month}/${year}`; /*2e*/
+};
+
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = "";
 
   const combinedMovsDates = acc.movements.map((mov, i) => ({
     movement: mov,
     movementDate: acc.movementsDates.at(i),
-  })); /*2*/
+  }));
 
-  if (sort) combinedMovsDates.sort((a, b) => a.movement - b.movement); /*3*/
+  if (sort) combinedMovsDates.sort((a, b) => a.movement - b.movement);
 
   combinedMovsDates.forEach(function (obj, index) {
-    /*4a*/ const { movement, movementDate } = obj; /*4b*/
-
-    const type = movement > 0 ? "deposit" : "withdrawal"; /*4c*/
-    const date = new Date(movementDate); /*4d*/
-    const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth()}`.padStart(2, 0);
-    const year = date.getFullYear();
-    const displayDate = `${day}/${month}/${year}`;
-
+    const { movement, movementDate } = obj;
+    const type = movement > 0 ? "deposit" : "withdrawal";
+    const date = new Date(movementDate);
+    const displayDate = formatMovementDate(date); /*3*/
     const html = `
             <div class="movements__row">
                 <div class="movements__type movements__type--${type}">${
@@ -288,8 +298,8 @@ btnSort.addEventListener("click", function (e) {
   sorted = !sorted;
 });
 
-// 1. Remove receiverAcc.movementsDates.push(new Date().toISOString()) in btnLoan event
-// 5. Finish
+// 1. from 188 to 191
+// 6. Finish
 
 /*
 git add .
